@@ -14,7 +14,7 @@
 #include <glm/vec2.hpp>
 #include <glm/matrix.hpp>
 
-#include "src/glslshader.h"
+#include "src/glslprogram.h"
 
 struct vertex
 {
@@ -113,7 +113,11 @@ int main()
         return EXIT_FAILURE;
     }
 
-    GLSLShader shader;
+    if(GLEW_ARB_get_program_binary)
+    {
+        std::cout << "Support binary shaders" << std::endl;
+    }
+    GLSLProgram shaderProgram;
 
     glClearColor(0.0f, 0.0f, 0.75f, 1.0f);
 
