@@ -22,6 +22,7 @@ option(BUILD_UNIT_TESTS OFF)
 add_subdirectory(${PROJECT_SOURCE_DIR}/externals/bullet3d)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/externals/glew)
+add_subdirectory(src)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
@@ -40,7 +41,7 @@ include_directories(
                     )
 
 add_executable(${PROJECT_NAME} "main.cpp")
-target_link_libraries(${PROJECT_NAME} assimp glfw libglew_static)
+target_link_libraries(${PROJECT_NAME} src assimp glfw libglew_static)
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif()

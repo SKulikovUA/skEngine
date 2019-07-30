@@ -14,6 +14,8 @@
 #include <glm/vec2.hpp>
 #include <glm/matrix.hpp>
 
+#include "src/glslshader.h"
+
 struct vertex
 {
     glm::vec3 mPosition;
@@ -110,6 +112,8 @@ int main()
         glfwTerminate();
         return EXIT_FAILURE;
     }
+
+    GLSLShader shader;
 
     glClearColor(0.0f, 0.0f, 0.75f, 1.0f);
 
