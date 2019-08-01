@@ -59,6 +59,11 @@ const std::string& GLSLProgram::getErrorDescription() const
     return  mErrorDescription;
 }
 
+void GLSLProgram::bind()
+{
+    glUseProgram(mProgramHandle);
+}
+
 
 
 GLSLProgram::Shader::Shader(const GLenum type)

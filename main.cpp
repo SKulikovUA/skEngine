@@ -125,6 +125,12 @@ int main()
         std::cout << shaderProgram.getErrorDescription() << std::endl;
     }
 
+    result = shaderProgram.attachShader(GL_VERTEX_SHADER, "./shaders/test.frag");
+    if(!result)
+    {
+        std::cout << shaderProgram.getErrorDescription() << std::endl;
+    }
+
     result = shaderProgram.linkProgramm();
     if(!result)
     {

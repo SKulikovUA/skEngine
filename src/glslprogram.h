@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <vector>
 
 class GLSLProgram
 {
@@ -15,6 +16,7 @@ public:
     bool attachShader(GLenum shaderType, const std::string& fileName);
     bool linkProgramm();
     const std::string& getErrorDescription() const;
+    void bind();
 
 private:
     class Shader
