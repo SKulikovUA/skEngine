@@ -1,4 +1,4 @@
-#version 4.5 core
+#version 450 core
 
 void main()
 {
