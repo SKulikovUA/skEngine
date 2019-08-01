@@ -5,22 +5,24 @@
 
 class Shader
 {
+
 public:
-    enum class SHADER_TYPE
-    {
-        UNKNOWN = -1,
-        VERTEX,
-        FRAGMENT,
-        GEOMETRY,
-        TESSELATION_CONTROL,
-        TESSELATION_EVAL,
-        COMPUTE
-    };
-public:
-    Shader(const SHADER_TYPE type, const std::string& fileName);
+    Shader(const GLenum type);
+    ~Shader();
+    bool loadFromFile(const std::string& fileName, std::string& error);
+
+    //Forbid copy
+    Shader(const Shader&) = delete;
+    Shader& operator = (const Shader&) = delete;
+
+
 
 private:
-    const SHADER_TYPE mShaderType;
+    bool readCodeFromFile(const std::string& fileName);
+
+private:
+    const GLenum mShaderType;
     GLuint mShaderHandle;
+    std::string mFileName;
 };
 

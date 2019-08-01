@@ -15,6 +15,7 @@
 #include <glm/matrix.hpp>
 
 #include "src/glslprogram.h"
+#include "src/shader.h"
 
 struct vertex
 {
@@ -117,6 +118,13 @@ int main()
     {
         std::cout << "Support binary shaders" << std::endl;
     }
+
+    Shader vShader(GL_VERTEX_SHADER);
+    std::string errorString;
+    vShader.loadFromFile("./shaders/test.vert", errorString);
+    std::cout << errorString;
+
+    Shader fShader(GL_FRAGMENT_SHADER);
     GLSLProgram shaderProgram;
 
     glClearColor(0.0f, 0.0f, 0.75f, 1.0f);
