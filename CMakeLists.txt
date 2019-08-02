@@ -26,12 +26,12 @@ add_subdirectory(src)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-else()
+else(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++11")
     if(NOT WIN32)
         set(GLAD_LIBRARIES dl)
-    endif()
-endif()
+    endif(NOT WIN32)
+endif(MSVC)
 
 include_directories(
                     externals/assimp/include/
@@ -44,5 +44,5 @@ add_executable(${PROJECT_NAME} "main.cpp")
 target_link_libraries(${PROJECT_NAME} src assimp glfw libglew_static)
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} opengl32)
-endif()
+endif(WIN32)
 

@@ -4,6 +4,11 @@
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+//#include <glm/vec2.hpp>
+//#include <glm/vec3.hpp>
+//#include <glm/vec4.hpp>
+
 class GLSLProgram
 {
 public:
@@ -17,6 +22,17 @@ public:
     bool linkProgramm();
     const std::string& getErrorDescription() const;
     void bind();
+    void unbind();
+
+    //Uniforms
+    int getUniformLocation(const std::string& name);
+    bool setUniformValue(const std::string& name, const bool value);
+    bool setUniformValue(const std::string& name, const int value);
+    bool setUniformValue(const std::string& name, const GLuint value);
+    bool setUniformValue(const std::string& name, const float value);
+    bool setUniformValue(const std::string& name, const glm::vec2& value);
+    bool setUniformValue(const std::string& name, const glm::vec3& value);
+    bool setUniformValue(const std::string& name, const glm::vec4& value);
 
 private:
     class Shader

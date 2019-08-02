@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <glm/gtc/type_ptr.hpp>
+
 GLSLProgram::GLSLProgram()
 {
     mProgramHandle = glCreateProgram();
@@ -64,8 +66,106 @@ void GLSLProgram::bind()
     glUseProgram(mProgramHandle);
 }
 
+void GLSLProgram::unbind()
+{
+    glUseProgram(0);
+}
 
+int GLSLProgram::getUniformLocation(const std::string& name)
+{
+    int result = -1;
+    if(mProgramHandle != 0)
+    {
+        result = glGetUniformLocation(mProgramHandle, name.c_str());
+    }
 
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const bool value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform1i(loc, value);
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const int value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform1i(loc, value);
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const GLuint value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform1ui(loc, value);
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const float value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform1f(loc, value);
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const glm::vec2& value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform2fv(loc, 1, glm::value_ptr(value));
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const glm::vec3& value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform3fv(loc, 1, glm::value_ptr(value));
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string& name, const glm::vec4& value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniform4fv(loc, 1, glm::value_ptr(value));
+        result = true;
+    }
+    return result;
+}
+
+//Shader implementation
 GLSLProgram::Shader::Shader(const GLenum type)
 : mShaderType(type)
 , mShaderHandle(0)

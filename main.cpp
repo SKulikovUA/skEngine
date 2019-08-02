@@ -45,20 +45,7 @@ std::ostream& operator << (std::ostream& os, const glm::vec4& v)
     std::cout << "Vec4: " << "x=" << v.x << " y=" << v.y << " z=" << v.z <<" w="<< v.w << std::endl;
     return os;
 }
-void testMath()
-{
-    glm::vec2 v1(1.0f, 2.0f);
-    glm::vec2 v2(5.0f, 0.0f);
 
-    glm::vec2 v = v2 - v1;
-
-    std::cout << v.x << ","<< v.y << " Length:"<< glm::distance(v2, v1) << std::endl;
-
-    glm::vec4 v3(2.0f, 3.0f, 4.0f, 5.0f);
-    glm::mat4 m = glm::mat4(1.0f);
-    std::cout << m << v3;
-    std::cout << v3 * m;
-}
 
 void errorCallback(int, const char* err)
 {
@@ -67,7 +54,6 @@ void errorCallback(int, const char* err)
 
 int main()
 {
-    testMath();
     Assimp::Importer importer;
 
     std::string extensions;
@@ -113,19 +99,14 @@ int main()
         return EXIT_FAILURE;
     }
 
-    if(GLEW_ARB_get_program_binary)
-    {
-        std::cout << "Support binary shaders" << std::endl;
-    }
-
     GLSLProgram shaderProgram;
-    bool result = shaderProgram.attachShader(GL_VERTEX_SHADER, "./shaders/test.vert");
+    bool result = shaderProgram.attachShader(GL_VERTEX_SHADER, "../shaders/test.vert");
     if(!result)
     {
         std::cout << shaderProgram.getErrorDescription() << std::endl;
     }
 
-    result = shaderProgram.attachShader(GL_VERTEX_SHADER, "./shaders/test.frag");
+    result = shaderProgram.attachShader(GL_FRAGMENT_SHADER, "../shaders/test.frag");
     if(!result)
     {
         std::cout << shaderProgram.getErrorDescription() << std::endl;
@@ -137,6 +118,9 @@ int main()
         std::cout << shaderProgram.getErrorDescription();
     }
 
+    std::cout << shaderProgram.getUniformLocation("cameraPos") << std::endl;
+    std::cout << shaderProgram.getUniformLocation("someUniform") << std::endl;
+    
     glClearColor(0.0f, 0.0f, 0.75f, 1.0f);
 
     while(!glfwWindowShouldClose(window))
