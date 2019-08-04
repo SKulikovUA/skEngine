@@ -5,9 +5,6 @@
 #include <vector>
 
 #include <glm/glm.hpp>
-//#include <glm/vec2.hpp>
-//#include <glm/vec3.hpp>
-//#include <glm/vec4.hpp>
 
 class GLSLProgram
 {
@@ -33,6 +30,10 @@ public:
     bool setUniformValue(const std::string& name, const glm::vec2& value);
     bool setUniformValue(const std::string& name, const glm::vec3& value);
     bool setUniformValue(const std::string& name, const glm::vec4& value);
+    bool setUniformValue(const std::string& name, const glm::mat2& value);
+    bool setUniformValue(const std::string& name, const glm::mat3& value);
+    bool setUniformValue(const std::string& name, const glm::mat4& value);
+
 
 private:
     class Shader

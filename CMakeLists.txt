@@ -34,10 +34,10 @@ else(MSVC)
 endif(MSVC)
 
 include_directories(
-                    externals/assimp/include/
-                    externals/glfw/include/
-                    externals/glm/
-                    externals/glew/include
+                    ${PROJECT_SOURCE_DIR}/externals/assimp/include/
+                    ${PROJECT_SOURCE_DIR}/externals/glfw/include/
+                    ${PROJECT_SOURCE_DIR}/externals/glm/
+                    ${PROJECT_SOURCE_DIR}/externals/glew/include
                     )
 
 add_executable(${PROJECT_NAME} "main.cpp")

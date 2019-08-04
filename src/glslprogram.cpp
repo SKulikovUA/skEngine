@@ -165,6 +165,42 @@ bool GLSLProgram::setUniformValue(const std::string& name, const glm::vec4& valu
     return result;
 }
 
+bool GLSLProgram::setUniformValue(const std::string &name, const glm::mat2 &value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniformMatrix2fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string &name, const glm::mat3 &value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+        result = true;
+    }
+    return result;
+}
+
+bool GLSLProgram::setUniformValue(const std::string &name, const glm::mat4 &value)
+{
+    bool result = false;
+    int loc = getUniformLocation(name);
+    if(loc != -1)
+    {
+        glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
+        result = true;
+    }
+    return result;
+}
+
 //Shader implementation
 GLSLProgram::Shader::Shader(const GLenum type)
 : mShaderType(type)
