@@ -5,8 +5,9 @@
 #include <vector>
 
 #include <glm/glm.hpp>
+#include "../interface/IShaderProgram.hpp"
 
-class GLSLProgram
+class GLSLProgram : public IShaderProgram
 {
 public:
     static constexpr int INFO_LOG_LENGTH = 512;
