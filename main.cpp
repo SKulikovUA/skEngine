@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <memory>
 
 #include <assimp/Importer.hpp>
 
@@ -59,12 +60,12 @@ int main()
     std::string extensions;
     importer.GetExtensionList(extensions);
     std::istringstream strstream(extensions);
-
+#if 0
     std::cout << offsetof(vertex, mPosition) << std::endl;
     std::cout << offsetof(vertex, mNormal) << std::endl;
     std::cout << offsetof(vertex, mTexCoords) << std::endl;
 
-#if 0
+
     std::string ext;
     while(std::getline(strstream, ext, ';'))
     {
@@ -83,7 +84,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Model converter", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "SK Engine", nullptr, nullptr);
     if(window == nullptr)
     {
         glfwTerminate();
@@ -99,29 +100,32 @@ int main()
         return EXIT_FAILURE;
     }
 
-    GLSLProgram shaderProgram;
-    bool result = shaderProgram.attachShader(GL_VERTEX_SHADER, "../shaders/test.vert");
-    if(!result)
+    std::unique_ptr<IShaderProgram> shaderProgram(new GLSLProgram);
+    if(shaderProgram != nullptr)
     {
-        std::cout << shaderProgram.getErrorDescription() << std::endl;
-    }
+        bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../shaders/test.vert");
+        if(!result)
+        {
+            std::cout << shaderProgram->getErrorDescription() << std::endl;
+        }
 
-    result = shaderProgram.attachShader(GL_FRAGMENT_SHADER, "../shaders/test.frag");
-    if(!result)
-    {
-        std::cout << shaderProgram.getErrorDescription() << std::endl;
-    }
+        result = shaderProgram->attachShader(GL_FRAGMENT_SHADER, "../shaders/test.frag");
+        if(!result)
+        {
+            std::cout << shaderProgram->getErrorDescription() << std::endl;
+        }
 
-    result = shaderProgram.linkProgramm();
-    if(!result)
-    {
-        std::cout << shaderProgram.getErrorDescription();
-    }
+        result = shaderProgram->linkProgramm();
+        if(!result)
+        {
+            std::cout << shaderProgram->getErrorDescription();
+        }
 
-    std::cout << shaderProgram.getUniformLocation("cameraPos") << std::endl;
-    std::cout << shaderProgram.getUniformLocation("someUniform") << std::endl;
+        std::cout << shaderProgram->getUniformLocation("cameraPos") << std::endl;
+        std::cout << shaderProgram->getUniformLocation("someUniform") << std::endl;
+    }
     
-    glClearColor(0.0f, 0.0f, 0.75f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.15f, 1.0f);
 
     while(!glfwWindowShouldClose(window))
     {

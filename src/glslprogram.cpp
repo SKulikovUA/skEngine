@@ -40,13 +40,15 @@ bool GLSLProgram::linkProgramm()
     if(mProgramHandle != 0)
     {
         int success = 0;
-        char linkStatus[INFO_LOG_LENGTH] = {0};
         glLinkProgram(mProgramHandle);
         glGetProgramiv(mProgramHandle, GL_LINK_STATUS, &success);
         if(!success)
         {
-            glGetShaderInfoLog(mProgramHandle, INFO_LOG_LENGTH, nullptr, linkStatus);
-            mErrorDescription = std::string(linkStatus);
+            GLint lenght = 0;
+            glGetShaderiv(mProgramHandle, GL_INFO_LOG_LENGTH, &lenght);
+            
+            mErrorDescription.resize(lenght);
+            glGetShaderInfoLog(mProgramHandle, lenght, &lenght, &mErrorDescription[0]);
         }
         else
         {
@@ -204,7 +206,6 @@ bool GLSLProgram::setUniformValue(const std::string &name, const glm::mat4 &valu
 //Shader implementation
 GLSLProgram::Shader::Shader(const GLenum type)
 : mShaderType(type)
-, mShaderHandle(0)
 {
 }
 
@@ -229,15 +230,16 @@ bool GLSLProgram::Shader::loadFromFile(const std::string& fileName, std::string&
         if(mShaderHandle != 0)
         {
             int success = 0;
-            char compileStatus[INFO_LOG_LENGTH] = {0};
             const char* sc = shaderCode.c_str();
             glShaderSource(mShaderHandle, 1, &sc, nullptr);
             glCompileShader(mShaderHandle);
             glGetShaderiv(mShaderHandle, GL_COMPILE_STATUS, &success);
             if(!success)
             {
-                glGetShaderInfoLog(mShaderHandle, INFO_LOG_LENGTH, nullptr, compileStatus);
-                error = std::string(compileStatus);
+                GLint lenght = 0;
+                glGetShaderiv(mShaderHandle, GL_INFO_LOG_LENGTH, &lenght);
+                error.resize(lenght);
+                glGetShaderInfoLog(mShaderHandle, lenght, &lenght, &error[0]);
                 result = false;
             }
         }
@@ -257,6 +259,7 @@ bool GLSLProgram::Shader::readCodeFromFile(const std::string &fileName, std::str
         std::stringstream codeStream;
         codeStream << fs.rdbuf();
         shaderCode = codeStream.str();
+        fs.close();
         result = true;
     }
     return result;

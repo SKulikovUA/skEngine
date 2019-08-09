@@ -10,30 +10,27 @@
 class GLSLProgram : public IShaderProgram
 {
 public:
-    static constexpr int INFO_LOG_LENGTH = 512;
-
-public:
     GLSLProgram();
-    ~GLSLProgram();
+    virtual ~GLSLProgram();
 
-    bool attachShader(GLenum shaderType, const std::string& fileName);
-    bool linkProgramm();
-    const std::string& getErrorDescription() const;
-    void bind();
-    void unbind();
+    virtual bool attachShader(GLenum shaderType, const std::string& fileName);
+    virtual bool linkProgramm();
+    virtual const std::string& getErrorDescription() const;
+    virtual void bind();
+    virtual void unbind();
 
     //Uniforms
-    int getUniformLocation(const std::string& name);
-    bool setUniformValue(const std::string& name, const bool value);
-    bool setUniformValue(const std::string& name, const int value);
-    bool setUniformValue(const std::string& name, const GLuint value);
-    bool setUniformValue(const std::string& name, const float value);
-    bool setUniformValue(const std::string& name, const glm::vec2& value);
-    bool setUniformValue(const std::string& name, const glm::vec3& value);
-    bool setUniformValue(const std::string& name, const glm::vec4& value);
-    bool setUniformValue(const std::string& name, const glm::mat2& value);
-    bool setUniformValue(const std::string& name, const glm::mat3& value);
-    bool setUniformValue(const std::string& name, const glm::mat4& value);
+    virtual int getUniformLocation(const std::string& name);
+    virtual bool setUniformValue(const std::string& name, const bool value);
+    virtual bool setUniformValue(const std::string& name, const int value);
+    virtual bool setUniformValue(const std::string& name, const GLuint value);
+    virtual bool setUniformValue(const std::string& name, const float value);
+    virtual bool setUniformValue(const std::string& name, const glm::vec2& value);
+    virtual bool setUniformValue(const std::string& name, const glm::vec3& value);
+    virtual bool setUniformValue(const std::string& name, const glm::vec4& value);
+    virtual bool setUniformValue(const std::string& name, const glm::mat2& value);
+    virtual bool setUniformValue(const std::string& name, const glm::mat3& value);
+    virtual bool setUniformValue(const std::string& name, const glm::mat4& value);
 
 
 private:
@@ -60,7 +57,7 @@ private:
     };
 
 private:
-    GLuint mProgramHandle;
+    GLuint mProgramHandle {0};
     std::string mErrorDescription;
 };
 
