@@ -17,3 +17,7 @@
 	path = externals/gli
 	url = https://github.com/g-truc/gli
 	
+[submodule "externals/stb"]
+	path = externals/stb
+	url = https://github.com/nothings/stb
+
