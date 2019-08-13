@@ -16,6 +16,7 @@
 #include <glm/matrix.hpp>
 
 #include "src/glslprogram.h"
+#include "src/glTexture2D.h"
 
 struct vertex
 {
@@ -72,6 +73,9 @@ int main()
         std::cout << ext << std::endl;
     }
 #endif
+    glTexture tex;
+    tex.loadFromFile("./../textures/gridlines.ktx");  
+
     if(glfwInit() == GLFW_FALSE)
     {
         std::cerr << "GLFW init failed";
