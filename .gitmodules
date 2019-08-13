@@ -13,3 +13,7 @@
 [submodule "externals/glew"]
 	path = externals/glew
 	url = https://github.com/Perlmint/glew-cmake
+[submodule "externals/gli"]
+	path = externals/gli
+	url = https://github.com/g-truc/gli
+	
