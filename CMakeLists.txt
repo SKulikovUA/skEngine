@@ -39,6 +39,7 @@ include_directories(
                     ${PROJECT_SOURCE_DIR}/externals/glm/
                     ${PROJECT_SOURCE_DIR}/externals/glew/include
                     ${PROJECT_SOURCE_DIR}/externals/gli/gli
+                    ${PROJECT_SOURCE_DIR}/externals/stb/
                     )
 
 add_executable(${PROJECT_NAME} "main.cpp")

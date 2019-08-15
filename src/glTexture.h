@@ -5,7 +5,7 @@
 class glTexture : public ITexture
 {
 public:
-    glTexture();
+    glTexture(const GLenum target);
     virtual bool loadFromFile(const std::string& fileName);
     virtual void bind(const GLuint tmuNumber);
     virtual void unbind();
@@ -13,5 +13,11 @@ public:
     virtual ~glTexture();
 
 private:
+    bool isCompressedTexture(const std::string& fileName);
+    bool loadCompressedTexture(const std::string& fileName);
+    bool loadUnCompressedTexture(const std::string& fileName);
+
+private:
     GLuint mTextureHandle;
+    GLenum mTarget;
 };

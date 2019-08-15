@@ -16,7 +16,7 @@
 #include <glm/matrix.hpp>
 
 #include "src/glslprogram.h"
-#include "src/glTexture2D.h"
+#include "src/glTexture.h"
 
 struct vertex
 {
@@ -73,7 +73,7 @@ int main()
         std::cout << ext << std::endl;
     }
 #endif
-    glTexture tex;
+    glTexture tex(GL_TEXTURE_2D);
     tex.loadFromFile("./../textures/gridlines.ktx");  
 
     if(glfwInit() == GLFW_FALSE)
