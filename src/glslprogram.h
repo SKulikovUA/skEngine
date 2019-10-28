@@ -13,24 +13,24 @@ public:
     GLSLProgram();
     virtual ~GLSLProgram();
 
-    virtual bool attachShader(GLenum shaderType, const std::string& fileName);
-    virtual bool linkProgramm();
-    virtual const std::string& getErrorDescription() const;
-    virtual void bind();
-    virtual void unbind();
+    virtual bool attachShader(GLenum shaderType, const std::string& fileName) override;
+    virtual bool linkProgramm() override;
+    virtual const std::string& getErrorDescription() const override;
+    virtual void bind() override;
+    virtual void unbind() override;
 
     //Uniforms
-    virtual int getUniformLocation(const std::string& name);
-    virtual bool setUniformValue(const std::string& name, const bool value);
-    virtual bool setUniformValue(const std::string& name, const int value);
-    virtual bool setUniformValue(const std::string& name, const GLuint value);
-    virtual bool setUniformValue(const std::string& name, const float value);
-    virtual bool setUniformValue(const std::string& name, const glm::vec2& value);
-    virtual bool setUniformValue(const std::string& name, const glm::vec3& value);
-    virtual bool setUniformValue(const std::string& name, const glm::vec4& value);
-    virtual bool setUniformValue(const std::string& name, const glm::mat2& value);
-    virtual bool setUniformValue(const std::string& name, const glm::mat3& value);
-    virtual bool setUniformValue(const std::string& name, const glm::mat4& value);
+    virtual int getUniformLocation(const std::string& name) override; 
+    virtual bool setUniformValue(const std::string& name, const bool value) override;
+    virtual bool setUniformValue(const std::string& name, const int value) override;
+    virtual bool setUniformValue(const std::string& name, const GLuint value) override;
+    virtual bool setUniformValue(const std::string& name, const float value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::vec2& value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::vec3& value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::vec4& value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::mat2& value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::mat3& value) override;
+    virtual bool setUniformValue(const std::string& name, const glm::mat4& value) override;
 
 
 private:

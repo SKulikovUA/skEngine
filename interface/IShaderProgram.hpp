@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+#include <GL/gl.h>
 #include <glm/glm.hpp>
 
 class IShaderProgram

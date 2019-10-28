@@ -6,9 +6,9 @@ class glTexture : public ITexture
 {
 public:
     glTexture(const GLenum target);
-    virtual bool loadFromFile(const std::string& fileName);
-    virtual void bind(const GLuint tmuNumber);
-    virtual void unbind();
+    virtual bool loadFromFile(const std::string& fileName) override;
+    virtual void bind(const GLuint tmuNumber) override;
+    virtual void unbind() override;
 
     virtual ~glTexture();
 

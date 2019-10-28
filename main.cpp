@@ -17,6 +17,7 @@
 
 #include "src/glslprogram.h"
 #include "src/glTexture.h"
+#include "src/Model.h"
 
 struct vertex
 {
@@ -56,11 +57,19 @@ void errorCallback(int, const char* err)
 
 int main()
 {
-    Assimp::Importer importer;
-
-    std::string extensions;
-    importer.GetExtensionList(extensions);
-    std::istringstream strstream(extensions);
+    std::unique_ptr<Model> pModel(new Model);
+    if(pModel)
+    {
+        if(pModel->loadFromFile(std::string("../assets/models/nanosuit.obj")))
+        {
+            std::cout << "Model loaded" << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to load model" << std::endl;
+        }
+        
+    }
 #if 0
     std::cout << offsetof(vertex, mPosition) << std::endl;
     std::cout << offsetof(vertex, mNormal) << std::endl;
@@ -74,7 +83,7 @@ int main()
     }
 #endif
     glTexture tex(GL_TEXTURE_2D);
-    tex.loadFromFile("./../textures/gridlines.ktx");  
+    tex.loadFromFile("../assets/textures/gridlines.ktx");  
 
     if(glfwInit() == GLFW_FALSE)
     {
@@ -107,13 +116,13 @@ int main()
     std::unique_ptr<IShaderProgram> shaderProgram(new GLSLProgram);
     if(shaderProgram != nullptr)
     {
-        bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../shaders/test.vert");
+        bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../assets/shaders/test.vert");
         if(!result)
         {
             std::cout << shaderProgram->getErrorDescription() << std::endl;
         }
 
-        result = shaderProgram->attachShader(GL_FRAGMENT_SHADER, "../shaders/test.frag");
+        result = shaderProgram->attachShader(GL_FRAGMENT_SHADER, "../assets/shaders/test.frag");
         if(!result)
         {
             std::cout << shaderProgram->getErrorDescription() << std::endl;
