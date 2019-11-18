@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../interface/IModel.hpp"
+#include <assimp/scene.h>
 
 class Model: public IModel
 {
@@ -13,4 +14,7 @@ public:
     virtual ~Model()
     {
     }
+
+private:
+    bool proccessModel(const aiScene* scene);
 };

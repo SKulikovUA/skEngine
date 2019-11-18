@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 project(skEngine)
 
-option(BUILD_SHARED_LIBS OFF)
-option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
-option(ASSIMP_BUILD_SAMPLES OFF)
-option(ASSIMP_BUILD_TESTS OFF)
-add_subdirectory(${PROJECT_SOURCE_DIR}/externals/assimp)
+if(NOT WIN32)
+    find_package(ASSIMP REQUIRED)
+    set(OpenGL_GL_PREFERENCE GLVND)
+endif(NOT WIN32)
+
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -34,7 +35,6 @@ else(MSVC)
 endif(MSVC)
 
 include_directories(
-                    ${PROJECT_SOURCE_DIR}/externals/assimp/include/
                     ${PROJECT_SOURCE_DIR}/externals/glfw/include/
                     ${PROJECT_SOURCE_DIR}/externals/glm/
                     ${PROJECT_SOURCE_DIR}/externals/glew/include

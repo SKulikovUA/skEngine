@@ -1,7 +1,6 @@
 #include "Model.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
-#include <assimp/scene.h>
 
 #include <iostream>
 
@@ -24,7 +23,7 @@ bool Model::loadFromFile(const std::string& fileName)
     if(pScene != nullptr)
     {
         std::cout << "Model meshes count : " << pScene->mNumMeshes << std::endl;
-        for(int i = 0; i < pScene->mNumMeshes; ++i)
+        for(unsigned int i = 0; i < pScene->mNumMeshes; ++i)
         {
             if(pScene->mMeshes[i]->HasPositions())
             {
@@ -43,4 +42,13 @@ bool Model::loadFromFile(const std::string& fileName)
 void Model::draw()
 {
     //
+}
+
+bool Model::proccessModel(const aiScene *scene) {
+    auto result = false;
+    if(scene != nullptr)
+    {
+        //
+    }
+    return result;
 }
