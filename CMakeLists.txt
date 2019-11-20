@@ -6,6 +6,16 @@ project(skEngine)
 if(NOT WIN32)
     find_package(ASSIMP REQUIRED)
     set(OpenGL_GL_PREFERENCE GLVND)
+else(NOT WIN32)
+	if(${CMAKE_BUILD_TYPE} MATCHES Release)
+		find_library(ASSIMP_LIBRARIES NAMES assimp PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+		find_library(ASSIMP_IRR_XML NAMES IrrXML PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+		find_library(ASSIMP_ZLIB NAMES zlibstatic PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+	else()
+		find_library(ASSIMP_LIBRARIES NAMES assimpd PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+		find_library(ASSIMP_IRR_XML NAMES IrrXMLd PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+		find_library(ASSIMP_ZLIB NAMES zlibstaticd PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+	endif()
 endif(NOT WIN32)
 
 
@@ -34,16 +44,23 @@ else(MSVC)
     endif(NOT WIN32)
 endif(MSVC)
 
-include_directories(
-                    ${PROJECT_SOURCE_DIR}/externals/glfw/include/
-                    ${PROJECT_SOURCE_DIR}/externals/glm/
-                    ${PROJECT_SOURCE_DIR}/externals/glew/include
-                    ${PROJECT_SOURCE_DIR}/externals/gli/gli
-                    ${PROJECT_SOURCE_DIR}/externals/stb/
-                    )
+set(DEF_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/externals/glfw/include/
+							${PROJECT_SOURCE_DIR}/externals/glm/
+							${PROJECT_SOURCE_DIR}/externals/glew/include/
+							${PROJECT_SOURCE_DIR}/externals/gli/
+							${PROJECT_SOURCE_DIR}/externals/stb/
+						)
+if(NOT MSVC)
+	include_directories( ${DEF_INCLUDE_DIRECTORIES} )
+else(NOT MSVC)
+	include_directories(
+						${DEF_INCLUDE_DIRECTORIES}
+						${PROJECT_SOURCE_DIR}/externals/assimp/include/
+						)
+endif(NOT MSVC)
 
 add_executable(${PROJECT_NAME} "main.cpp")
-target_link_libraries(${PROJECT_NAME} src assimp glfw libglew_static)
+target_link_libraries(${PROJECT_NAME} src ${ASSIMP_LIBRARIES} ${ASSIMP_IRR_XML} ${ASSIMP_ZLIB} glfw libglew_static)
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif(WIN32)
