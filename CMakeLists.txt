@@ -1,19 +1,17 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_PROJECT_VERSION)
 
+set(CMAKE_BUILD_TYPE "Debug")
+
 project(skEngine)
 
-if(NOT WIN32)
+if(NOT MSVC)
     find_package(ASSIMP REQUIRED)
     set(OpenGL_GL_PREFERENCE GLVND)
-else(NOT WIN32)
-	if(${CMAKE_BUILD_TYPE} MATCHES Release)
-		find_library(ASSIMP_LIBRARIES NAMES assimp-vc141-mt PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
-	else()
-		find_library(ASSIMP_LIBRARIES NAMES assimp-vc141-mtd PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
-	endif()
-endif(NOT WIN32)
+else(NOT MSVC)
+	find_library(ASSIMP_LIBRARIES NAMES assimp-vc141-mt PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
+endif(NOT MSVC)
 
 
 option(GLFW_BUILD_DOCS OFF)
@@ -56,9 +54,18 @@ else(NOT MSVC)
 						)
 endif(NOT MSVC)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")
+
 add_executable(${PROJECT_NAME} "main.cpp")
 target_link_libraries(${PROJECT_NAME} src ${ASSIMP_LIBRARIES} glfw libglew_static)
-if(WIN32)
+if(MSVC)
     target_link_libraries(${PROJECT_NAME} opengl32)
-endif(WIN32)
+endif(MSVC)
 
+if(MSVC)
+	add_custom_command(
+  		TARGET ${PROJECT_NAME} POST_BUILD
+  		COMMAND ${CMAKE_COMMAND} -E copy 
+    	${CMAKE_CURRENT_SOURCE_DIR}/externals/assimp/bin/assimp-vc141-mt.dll
+		$<TARGET_FILE_DIR:${PROJECT_NAME}>)
+endif(MSVC)
