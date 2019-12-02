@@ -9,7 +9,5 @@ public:
     virtual void bind(const GLuint tmuNumber) = 0;
     virtual void unbind() = 0;
     virtual bool loadFromFile(const std::string& fileName) = 0;
-    virtual ~ITexture()
-    {
-    } 
+    virtual ~ITexture() = default;
 };

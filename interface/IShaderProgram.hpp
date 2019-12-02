@@ -8,9 +8,7 @@ class IShaderProgram
 {
 public:
 
-    virtual ~IShaderProgram()
-    {
-    }
+    virtual ~IShaderProgram() = default;
 
     virtual bool attachShader(GLenum shaderType, const std::string& fileName) = 0;
     virtual bool linkProgramm() = 0;
