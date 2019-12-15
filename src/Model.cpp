@@ -5,6 +5,7 @@
 #include <iostream>
 
 Model::Model()
+: mPositions()
 {
 }
 
@@ -12,6 +13,10 @@ bool Model::loadFromFile(const std::string& fileName)
 {
     bool result = false;
     Assimp::Importer importer;
+
+    auto processPositions = [this](){
+        mPositions.push_back(glm::vec3());
+    };
 
     const aiScene* pScene = importer.ReadFile(
         fileName, 
@@ -41,14 +46,14 @@ bool Model::loadFromFile(const std::string& fileName)
 
 void Model::draw()
 {
-    //
+    //@TODO
 }
 
 bool Model::proccessModel(const aiScene *scene) {
     auto result = false;
     if(scene != nullptr)
     {
-        //
+        //@TODO
     }
     return result;
 }
