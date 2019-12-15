@@ -54,15 +54,12 @@ else(NOT MSVC)
 						)
 endif(NOT MSVC)
 
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/")
-
 add_executable(${PROJECT_NAME} "main.cpp")
 target_link_libraries(${PROJECT_NAME} src ${ASSIMP_LIBRARIES} glfw libglew_static)
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif(MSVC)
 
-#set(ASSIMP_LIBRARY_NAME, "")
 string(TOLOWER ${CMAKE_BUILD_TYPE} B_T)
 if(${B_T} STREQUAL "debug")
 	set(ASSIMP_LIBRARY_NAME "assimp-vc141-mtd.dll")
@@ -84,12 +81,6 @@ if(MSVC)
 		${CMAKE_SOURCE_DIR}/bin
 	)
 
-#	add_custom_command(
-#		TARGET ${PROJECT_NAME} POST_BUILD
-#		COMMAND ${CMAKE_COMMAND} -E echo 
-#		"Custom echo "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-#		${CMAKE_SOURCE_DIR}/bin
-#	)
 else(MSVC)
 	add_custom_command(
   		TARGET ${PROJECT_NAME} POST_BUILD
