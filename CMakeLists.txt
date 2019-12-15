@@ -68,4 +68,10 @@ if(MSVC)
   		COMMAND ${CMAKE_COMMAND} -E copy 
     	${CMAKE_CURRENT_SOURCE_DIR}/externals/assimp/bin/assimp-vc141-mt.dll
 		$<TARGET_FILE_DIR:${PROJECT_NAME}>)
+else(MSVC)
+	add_custom_command(
+  		TARGET ${PROJECT_NAME} POST_BUILD
+  		COMMAND ${CMAKE_COMMAND} -E copy 
+    	$<TARGET_FILE_DIR:${PROJECT_NAME}>
+		$(CMAKE_SOURCE_DIR)/bin)
 endif(MSVC)
