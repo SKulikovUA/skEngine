@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_PROJECT_VERSION)
 
-set(CMAKE_BUILD_TYPE "Debug")
+if( NOT CMAKE_BUILD_TYPE)
+	SET(CMAKE_BUILD_TYPE Release)
+endif()
 
 project(skEngine)
 
@@ -60,7 +62,9 @@ if(MSVC)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif(MSVC)
 
+#SET(B_T "")
 string(TOLOWER ${CMAKE_BUILD_TYPE} B_T)
+message(WARNING ${CMAKE_BUILD_TYPE})
 if(${B_T} STREQUAL "debug")
 	set(ASSIMP_LIBRARY_NAME "assimp-vc141-mtd.dll")
 else()
