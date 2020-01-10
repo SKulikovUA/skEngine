@@ -48,7 +48,7 @@ bool Model::proccessModel(const aiScene *scene) {
     auto result = false;
     if(scene != nullptr)
     {
-        //
+        //@TODO
     }
     return result;
 }
