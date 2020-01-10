@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+#include <glm/vec3.hpp>
 #include "../interface/IModel.hpp"
 #include <assimp/scene.h>
 
@@ -17,4 +19,7 @@ public:
 
 private:
     bool proccessModel(const aiScene* scene);
+
+private:
+    std::vector<glm::vec3> mPositions;
 };
