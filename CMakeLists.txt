@@ -63,12 +63,12 @@ endif(MSVC)
 
 string(TOLOWER ${CMAKE_BUILD_TYPE} B_T)
 if(${B_T} STREQUAL "debug")
-	set(ASSIMP_LIBRARY_NAME "assimp-vc141-mtd.dll")
+        set(ASSIMP_LIBRARY_NAME "assimp-vc141-mt.dll")
 else()
 	set(ASSIMP_LIBRARY_NAME "assimp-vc141-mt.dll")
 endif()
 
-message(WARNING ${ASSIMP_LIBRARY_NAME})
+message(INFO ${ASSIMP_LIBRARY_NAME})
 
 if(MSVC)
 	add_custom_command(

@@ -1,6 +1,6 @@
 *.user
 build/
 .vscode/
-skEngine
+vkEngine
 bin
 
