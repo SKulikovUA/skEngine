@@ -4,40 +4,129 @@
 
 #include <iostream>
 
+VertexAttributeFormat::VertexAttributeFormat(TVertexComponentList vertexAttr)
+{
+    mVertexAttributes = std::move(vertexAttr);
+}
+
+const TVertexComponentList& VertexAttributeFormat::vertexAttributesList() const
+{
+    return mVertexAttributes;
+}
+
+uint32_t VertexAttributeFormat::stride()
+{
+    uint32_t result = 0;
+    for(const auto& vComponent : mVertexAttributes)
+    {
+        switch (vComponent)
+        {
+        case VertexComponent::VF_POSITION:
+        case VertexComponent::VF_NORMAL:
+        case VertexComponent::VF_TANGENT:
+        case VertexComponent::VF_BITANGENT:
+            result += 3 * sizeof(float);
+            break;
+
+        case VertexComponent::VF_COLOR:
+            result += 4 * sizeof(float);
+        
+        case VertexComponent::VF_TEX_COORD:
+            result += 2 * sizeof(float);
+        
+        default:
+            break;
+        }
+    }
+    return result;
+}
+
 Model::Model()
 : mVertices()
 , mIndices()
 {
 }
 
-bool Model::loadFromFile(const std::string& fileName)
+bool Model::loadFromFile(const std::string& fileName, const IVertexComponents& vertexFormat)
 {
     bool result = false;
     Assimp::Importer importer;
 
-    auto proccessModel = [ this ](const aiMesh* mesh)
+    auto proccessModel = [ this, &vertexFormat ](const aiMesh* mesh)
     {
         if(mesh != nullptr)
         {
             std::cout << mesh->mName.C_Str() << std::endl;
+            uint32_t indexBase = static_cast<uint32_t>(mIndices.size());
             for(uint32_t i = 0; i < mesh->mNumFaces; ++i)
             {
-                for(uint32_t j=0;  j < mesh->mFaces[j].mNumIndices;++j)
+                const aiFace& face = mesh->mFaces[i];
+                if(face.mNumIndices == 3)
                 {
-                    mIndices.push_back(mesh->mFaces[i].mIndices[j]);
+                    mIndices.push_back(indexBase + face.mIndices[0]);
+                    mIndices.push_back(indexBase + face.mIndices[1]);
+                    mIndices.push_back(indexBase + face.mIndices[2]);
+                }
+                else
+                {
+                    continue;
                 }
             }
 
+            const aiVector3D Zero(0.0f, 0.0f, 0.0f);
+            const aiColor4D DefColor(1.0f, 1.0f, 1.0f, 1.0f);
             for(uint32_t i = 0; i < mesh->mNumVertices; ++i)
             {
-                Vertex v;
-                v.mPosition = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
-                v.mNormal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-                if(mesh->mTextureCoords[0] != nullptr )
+                const aiVector3D* pos = mesh->HasPositions() ? &(mesh->mVertices[i]) : &Zero;
+                const aiVector3D* norm = mesh->HasNormals() ? &(mesh->mNormals[i]) : &Zero;
+                const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? &(mesh->mTextureCoords[0][i]) : &Zero;
+                const aiColor4D* color = mesh->HasVertexColors(0) ? &(mesh->mColors[0][i]) : &DefColor;
+                const aiVector3D* tangent = mesh->HasTangentsAndBitangents() ? &(mesh->mTangents[i]) : &Zero;
+                const aiVector3D* biTangent = mesh->HasTangentsAndBitangents() ? &(mesh->mBitangents[i]) : &Zero;
+
+                auto pushVec3DInVertexArray = [ this ](const aiVector3D* val)
                 {
-                    v.mTextCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y); 
+                        mVertices.push_back(val->x);
+                        mVertices.push_back(val->y);
+                        mVertices.push_back(val->z);
+                };
+
+                for(const auto& vComp : vertexFormat.vertexAttributesList())
+                {
+                    switch (vComp)
+                    {
+                    case VertexComponent::VF_POSITION:
+                        pushVec3DInVertexArray(pos);
+                        break;
+
+                    case VertexComponent::VF_NORMAL:
+                        pushVec3DInVertexArray(norm);
+                        break;
+                    
+                    case VertexComponent::VF_TEX_COORD:
+                        mVertices.push_back(texCoord->x);
+                        mVertices.push_back(texCoord->y);
+                        break;
+
+                    case VertexComponent::VF_COLOR:
+                        mVertices.push_back(color->r);
+                        mVertices.push_back(color->g);
+                        mVertices.push_back(color->b);
+                        mVertices.push_back(color->a);
+                        break;
+
+                    case VertexComponent::VF_TANGENT:
+                        pushVec3DInVertexArray(tangent);
+                        break;
+
+                    case VertexComponent::VF_BITANGENT:
+                        pushVec3DInVertexArray(biTangent);
+                        break;
+
+                    default:
+                        break;
+                    }
                 }
-                mVertices.push_back(v);
             }
         }
     };
@@ -58,6 +147,11 @@ bool Model::loadFromFile(const std::string& fileName)
         }
         result = true;
         std::cout << "Scene triangle count : " << mIndices.size() / 3 << std::endl;
+    }
+    else
+    {
+        std::string error = importer.GetErrorString();
+        std::cout << error << std::endl;
     }
     return result;
 }

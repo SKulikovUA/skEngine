@@ -5,31 +5,32 @@
 #include <glm/vec3.hpp>
 #include "../interface/IModel.hpp"
 #include <assimp/scene.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+
+class VertexAttributeFormat : public IVertexComponents
+{
+public:
+    VertexAttributeFormat(TVertexComponentList vertexAttr);
+    virtual const TVertexComponentList& vertexAttributesList() const override;
+    virtual uint32_t stride() override;
+
+private:
+    TVertexComponentList mVertexAttributes;
+};
 
 class Model: public IModel
 {
 protected:
-    struct Vertex
-    {
-        glm::vec3 mPosition;
-        glm::vec3 mNormal;
-        glm::vec2 mTextCoord;
-
-        Vertex()
-        {
-            mPosition = glm::vec3();
-            mNormal = glm::vec3();
-            mTextCoord = glm::vec2();
-        }
-    };
-
-    using TVertexList = std::vector<Vertex>;
+    using TVertexList = std::vector<float>;
     using TIndicesList = std::vector<uint32_t>;
 
 public:
     Model();
 
-    virtual bool loadFromFile(const std::string& fileName) override final;
+    virtual bool loadFromFile(const std::string& fileName, const IVertexComponents& vertexFormat) override final;
     virtual void draw() override final;
 
     virtual ~Model()

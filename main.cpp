@@ -60,9 +60,12 @@ int main()
     std::unique_ptr<Model> pModel(new Model);
     if(pModel)
     {
-        if(pModel->loadFromFile(std::string("../assets/models/nanosuit.obj")))
+        VertexAttributeFormat fmt = 
+            VertexAttributeFormat({VertexComponent::VF_POSITION, VertexComponent::VF_TEX_COORD});
+        if(pModel->loadFromFile(std::string("../assets/models/nanosuit.obj"), fmt))
         {
             std::cout << "Model loaded" << std::endl;
+            std::cout << "Vertex format stride : " << fmt.stride() << std::endl;
         }
         else
         {
