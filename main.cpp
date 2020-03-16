@@ -2,11 +2,12 @@
 #include <sstream>
 #include <string>
 #include <memory>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <assimp/Importer.hpp>
 
 #ifdef _WIN32
-    #define GLEW_STATIC
+#define GLEW_STATIC
 #endif
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -21,55 +22,61 @@
 
 struct vertex
 {
-    glm::vec3 mPosition;
-    glm::vec3 mNormal;
-    glm::vec2 mTexCoords;
+   glm::vec3 mPosition;
+   glm::vec3 mNormal;
+   glm::vec2 mTexCoords;
 };
 
-std::ostream& operator << (std::ostream& os, const glm::mat3& m)
+std::ostream &operator<<(std::ostream &os, const glm::mat3 &m)
 {
-    os << "[" << m[0][0] << "," << m[0][1] << "," << m[0][2] << "]" <<std::endl;
-    os << "[" << m[1][0] << "," << m[1][1] << "," << m[1][2] << "]" <<std::endl;
-    os << "[" << m[2][0] << "," << m[2][1] << "," << m[2][2] << "]" <<std::endl;
-    return os;
+   os << "[" << m[0][0] << "," << m[0][1] << "," << m[0][2] << "]" << std::endl;
+   os << "[" << m[1][0] << "," << m[1][1] << "," << m[1][2] << "]" << std::endl;
+   os << "[" << m[2][0] << "," << m[2][1] << "," << m[2][2] << "]" << std::endl;
+   return os;
 }
 
-std::ostream& operator << (std::ostream& os, const glm::mat4& m)
+std::ostream &operator<<(std::ostream &os, const glm::mat4 &m)
 {
-    os << "[" << m[0][0] << "," << m[0][1] << "," << m[0][2] << ", " << m[0][3] << "]" <<std::endl;
-    os << "[" << m[1][0] << "," << m[1][1] << "," << m[1][2] << ", " << m[0][3] << "]" <<std::endl;
-    os << "[" << m[2][0] << "," << m[2][1] << "," << m[2][2] << ", " << m[0][3] << "]" <<std::endl;
-    os << "[" << m[3][0] << "," << m[3][1] << "," << m[3][2] << ", " << m[3][3] << "]" <<std::endl;
-    return os;
+   os << "[" << m[0][0] << "," << m[0][1] << "," << m[0][2] << ", " << m[0][3] << "]" << std::endl;
+   os << "[" << m[1][0] << "," << m[1][1] << "," << m[1][2] << ", " << m[0][3] << "]" << std::endl;
+   os << "[" << m[2][0] << "," << m[2][1] << "," << m[2][2] << ", " << m[0][3] << "]" << std::endl;
+   os << "[" << m[3][0] << "," << m[3][1] << "," << m[3][2] << ", " << m[3][3] << "]" << std::endl;
+   return os;
 }
 
-std::ostream& operator << (std::ostream& os, const glm::vec4& v)
+std::ostream &operator<<(std::ostream &os, const glm::vec4 &v)
 {
-    std::cout << "Vec4: " << "x=" << v.x << " y=" << v.y << " z=" << v.z <<" w="<< v.w << std::endl;
-    return os;
+   std::cout << "Vec4: "
+             << "x=" << v.x << " y=" << v.y << " z=" << v.z << " w=" << v.w << std::endl;
+   return os;
 }
 
-
-void errorCallback(int, const char* err)
+void errorCallback(int, const char *err)
 {
-    std::cerr << err << std::endl;
+   std::cerr << err << std::endl;
+}
+
+void setupMatrices(GLFWwindow* win, IShaderProgram* shader)
+{
+   if(win != nullptr)
+   {
+      int w,h;
+      glfwGetFramebufferSize(win, &w, &h);
+      glViewport(0, 0, w, h);
+      float aspect = static_cast<float>(w) / static_cast<float>(h);
+      glm::mat4x4 projMatrix = glm::perspective(glm::radians(45.0f), aspect, 0.001f, 100000.0f);
+      glm::mat4x4 viewMatrix = glm::lookAt(
+         glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+      glm::mat4x4 model = glm::mat4x4(1.0f);
+      model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+      model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+      glm::mat4x4 mvp = projMatrix * viewMatrix * model;
+      shader->setUniformValue(std::string("mvp"), mvp);
+   }
 }
 
 int main()
 {
-    std::unique_ptr<Model> pModel(new Model);
-    if(pModel)
-    {
-        if(pModel->loadFromFile(std::string("../assets/models/nanosuit.obj")))
-        {
-            std::cout << "Model loaded" << std::endl;
-        }
-        else
-        {
-            std::cout << "Failed to load model" << std::endl;
-        }
-        
-    }
 #if 0
     std::cout << offsetof(vertex, mPosition) << std::endl;
     std::cout << offsetof(vertex, mNormal) << std::endl;
@@ -81,71 +88,94 @@ int main()
     {
         std::cout << ext << std::endl;
     }
+
+   glTexture tex(GL_TEXTURE_2D);
+   tex.loadFromFile("../assets/textures/gridlines.ktx");
 #endif
-    glTexture tex(GL_TEXTURE_2D);
-    tex.loadFromFile("../assets/textures/gridlines.ktx");  
+   if (glfwInit() == GLFW_FALSE)
+   {
+      std::cerr << "GLFW init failed";
+      return EXIT_FAILURE;
+   }
+   glfwSetErrorCallback(errorCallback);
 
-    if(glfwInit() == GLFW_FALSE)
-    {
-        std::cerr << "GLFW init failed";
-        return EXIT_FAILURE;
-    }
-    glfwSetErrorCallback(errorCallback);
+   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+   GLFWwindow *window = glfwCreateWindow(1280, 720, "SK Engine", nullptr, nullptr);
+   if (window == nullptr)
+   {
+      glfwTerminate();
+      return EXIT_FAILURE;
+   }
+   glfwMakeContextCurrent(window);
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "SK Engine", nullptr, nullptr);
-    if(window == nullptr)
-    {
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
-    glfwMakeContextCurrent(window);
+   GLenum error = glewInit();
+   if (error != GLEW_OK)
+   {
+      std::cerr << "GLEW init failed: " << glewGetErrorString(error) << std::endl;
+      glfwTerminate();
+      return EXIT_FAILURE;
+   }
 
-    GLenum error = glewInit();
-    if(error != GLEW_OK)
-    {
-        std::cerr << "GLEW init failed: " << glewGetErrorString(error) << std::endl;
-        glfwTerminate();
-        return EXIT_FAILURE;
-    }
+   std::unique_ptr<IShaderProgram> shaderProgram(new GLSLProgram);
+   if (shaderProgram != nullptr)
+   {
+      bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../assets/shaders/test.vert");
+      if (!result)
+      {
+         std::cout << shaderProgram->getErrorDescription() << std::endl;
+      }
 
-    std::unique_ptr<IShaderProgram> shaderProgram(new GLSLProgram);
-    if(shaderProgram != nullptr)
-    {
-        bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../assets/shaders/test.vert");
-        if(!result)
-        {
-            std::cout << shaderProgram->getErrorDescription() << std::endl;
-        }
+      result = shaderProgram->attachShader(GL_FRAGMENT_SHADER, "../assets/shaders/test.frag");
+      if (!result)
+      {
+         std::cout << shaderProgram->getErrorDescription() << std::endl;
+      }
 
-        result = shaderProgram->attachShader(GL_FRAGMENT_SHADER, "../assets/shaders/test.frag");
-        if(!result)
-        {
-            std::cout << shaderProgram->getErrorDescription() << std::endl;
-        }
+      result = shaderProgram->linkProgramm();
+      if (!result)
+      {
+         std::cout << shaderProgram->getErrorDescription();
+      }
+   }
 
-        result = shaderProgram->linkProgramm();
-        if(!result)
-        {
-            std::cout << shaderProgram->getErrorDescription();
-        }
+   glClearColor(0.0f, 0.0f, 0.15f, 1.0f);
 
-        std::cout << shaderProgram->getUniformLocation("cameraPos") << std::endl;
-        std::cout << shaderProgram->getUniformLocation("someUniform") << std::endl;
-    }
-    
-    glClearColor(0.0f, 0.0f, 0.15f, 1.0f);
+   std::unique_ptr<Model> pModel = std::make_unique<Model>();
+   if (pModel)
+   {
+      VertexAttributeFormat fmt =
+          VertexAttributeFormat(
+             {VertexComponent::VF_POSITION, 
+             VertexComponent::VF_TEX_COORD,
+             VertexComponent::VF_NORMAL});
+      if (pModel->loadFromFile(std::string("../assets/models/nanosuit.obj"), &fmt))
+      {
+         std::cout << "Model loaded" << std::endl;
+         std::cout << "Vertex format stride : " << fmt.stride() << std::endl;
+      }
+      else
+      {
+         std::cout << "Failed to load model" << std::endl;
+      }
+   }
 
-    while(!glfwWindowShouldClose(window))
-    {
-        glfwPollEvents();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glfwSwapBuffers(window);
-    }
-    glfwTerminate();
-    return EXIT_SUCCESS;
+   while (!glfwWindowShouldClose(window))
+   {
+      glfwPollEvents();
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      if(pModel != nullptr && shaderProgram != nullptr)
+      {
+         shaderProgram->bind();
+         setupMatrices(window, shaderProgram.get());
+         pModel->draw();
+         shaderProgram->unbind();
+      }
+      glfwSwapBuffers(window);
+   }
+   glfwTerminate();
+   return EXIT_SUCCESS;
 }

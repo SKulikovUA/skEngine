@@ -5,40 +5,40 @@
 #include <glm/vec3.hpp>
 #include "../interface/IModel.hpp"
 #include <assimp/scene.h>
+#include <GL/glew.h>
 
-class Model: public IModel
+class VertexAttributeFormat : public IVertexComponents
 {
-protected:
-    struct Vertex
-    {
-        glm::vec3 mPosition;
-        glm::vec3 mNormal;
-        glm::vec2 mTextCoord;
-
-        Vertex()
-        {
-            mPosition = glm::vec3();
-            mNormal = glm::vec3();
-            mTextCoord = glm::vec2();
-        }
-    };
-
-    using TVertexList = std::vector<Vertex>;
-    using TIndicesList = std::vector<uint32_t>;
-
 public:
-    Model();
-
-    virtual bool loadFromFile(const std::string& fileName) override final;
-    virtual void draw() override final;
-
-    virtual ~Model()
-    {
-    }
+   VertexAttributeFormat(TVertexComponentList vertexAttr);
+   virtual const TVertexComponentList &vertexAttributesList() const override;
+   virtual GLsizei stride() const override;
 
 private:
-    TVertexList mVertices;
-    TIndicesList mIndices;
-    GLuint mVboId;
-    GLuint mIboId; 
+   TVertexComponentList mVertexAttributes;
+};
+
+class Model : public IModel
+{
+protected:
+   using TVertexList = std::vector<float>;
+   using TIndicesList = std::vector<uint32_t>;
+
+public:
+   Model();
+
+   virtual bool loadFromFile(const std::string &fileName, const IVertexComponents* vertexFormat) override final;
+   virtual void draw() override final;
+   virtual ~Model();
+
+private:
+   void setupVertexBuffers();
+   void createVertexArrayObject(const IVertexComponents* vertexFormat);
+
+private:
+   TVertexList mVertices;
+   TIndicesList mIndices;
+   GLuint mVAO;
+   GLuint mVBO;
+   GLuint mEBO;
 };
