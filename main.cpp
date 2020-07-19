@@ -65,13 +65,19 @@ void setupMatrices(GLFWwindow* win, IShaderProgram* shader)
       glViewport(0, 0, w, h);
       float aspect = static_cast<float>(w) / static_cast<float>(h);
       glm::mat4x4 projMatrix = glm::perspective(glm::radians(45.0f), aspect, 0.001f, 100000.0f);
+      glm::vec3 viewPos(0.0f, 0.0f, 15.0f);
       glm::mat4x4 viewMatrix = glm::lookAt(
-         glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+         viewPos, glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
       glm::mat4x4 model = glm::mat4x4(1.0f);
-      model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+      model = glm::translate(model, glm::vec3(0.0f, -1.75f, 10.0f)); // translate it down so it's at the center of the scene
       model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-      glm::mat4x4 mvp = projMatrix * viewMatrix * model;
-      shader->setUniformValue(std::string("mvp"), mvp);
+
+      shader->setUniformValue(std::string("projection"), projMatrix);
+      shader->setUniformValue(std::string("view"), viewMatrix);
+      shader->setUniformValue(std::string("model"), model);
+      glm::vec3 lightPos(viewPos);
+      shader->setUniformValue(std::string("lightPos"), lightPos);
+      shader->setUniformValue(std::string("viewPos"), viewPos);
    }
 }
 
@@ -120,7 +126,7 @@ int main()
       return EXIT_FAILURE;
    }
 
-   std::unique_ptr<IShaderProgram> shaderProgram(new GLSLProgram);
+   std::unique_ptr<IShaderProgram> shaderProgram = std::make_unique<GLSLProgram>();
    if (shaderProgram != nullptr)
    {
       bool result = shaderProgram->attachShader(GL_VERTEX_SHADER, "../assets/shaders/test.vert");
@@ -149,8 +155,7 @@ int main()
    {
       VertexAttributeFormat fmt =
           VertexAttributeFormat(
-             {VertexComponent::VF_POSITION, 
-             VertexComponent::VF_TEX_COORD,
+             {VertexComponent::VF_POSITION,
              VertexComponent::VF_NORMAL});
       if (pModel->loadFromFile(std::string("../assets/models/nanosuit.obj"), &fmt))
       {
@@ -167,6 +172,9 @@ int main()
    {
       glfwPollEvents();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glEnable(GL_CULL_FACE);
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glEnable(GL_DEPTH_TEST);
       if(pModel != nullptr && shaderProgram != nullptr)
       {
          shaderProgram->bind();
