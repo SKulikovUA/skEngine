@@ -67,6 +67,7 @@ bool Model::loadFromFile(const std::string &fileName, const IVertexComponents *v
 
          const aiVector3D Zero(0.0f, 0.0f, 0.0f);
          const aiColor4D DefColor(1.0f, 1.0f, 1.0f, 1.0f);
+         std::cout << "Num vertices : " << mesh->mNumVertices << std::endl;
          for (uint32_t i = 0; i < mesh->mNumVertices; ++i)
          {
             const aiVector3D *pos = mesh->HasPositions() ? &(mesh->mVertices[i]) : &Zero;
@@ -91,7 +92,7 @@ bool Model::loadFromFile(const std::string &fileName, const IVertexComponents *v
                   break;
 
                case VertexComponent::VF_NORMAL:
-                  pushVec3DInVertexArray(norm);
+                   pushVec3DInVertexArray(norm);
                   break;
 
                case VertexComponent::VF_TEX_COORD:
@@ -155,7 +156,7 @@ bool Model::loadFromFile(const std::string &fileName, const IVertexComponents *v
 void Model::draw()
 {
    glBindVertexArray(mVAO);
-   glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, 0);
+   glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, (GLsizei*)0);
    glBindVertexArray(0);
 }
 
@@ -186,6 +187,7 @@ void Model::setupVertexBuffers()
    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
    glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float),
                 mVertices.data(), GL_STATIC_DRAW);
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
@@ -197,44 +199,44 @@ void Model::createVertexArrayObject(const IVertexComponents* vertexFormat)
 {
    glGenVertexArrays(1, &mVAO);
 
-      glBindVertexArray(mVAO);
-      uint32_t stride = vertexFormat->stride();
+   glBindVertexArray(mVAO);
+   uint32_t stride = vertexFormat->stride();
 
-      setupVertexBuffers();
-      uint32_t localOffset = 0;
-      GLuint attrIndex = 0;
-      for (const auto &component : vertexFormat->vertexAttributesList())
+   setupVertexBuffers();
+   uint32_t localOffset = 0;
+   GLuint attrIndex = 0;
+   glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+   for (const auto &component : vertexFormat->vertexAttributesList())
+   {
+      intptr_t offset = 0;
+      switch (component)
       {
-         intptr_t offset = 0;
-         switch (component)
-         {
-         case VertexComponent::VF_POSITION:
-            offset = localOffset * sizeof(GLfloat);
-            glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(
-                0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offset));
-            attrIndex++;
-            localOffset += 3;
-            break;
+      case VertexComponent::VF_POSITION:
+         offset = localOffset * sizeof(GLfloat);
+         glEnableVertexAttribArray(0);
+         glVertexAttribPointer(
+               0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(0));
+         attrIndex++;
+         localOffset += 3;
+         break;
 
-         case VertexComponent::VF_NORMAL:
-            offset = localOffset * sizeof(GLfloat);
-            glVertexAttribPointer(
-                attrIndex, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offset));
-            glEnableVertexAttribArray(attrIndex);
-            attrIndex++;
-            localOffset += 3;
-            break;
+      case VertexComponent::VF_NORMAL:
+         offset = localOffset * sizeof(GLfloat);
+         glEnableVertexAttribArray(attrIndex);
+         glVertexAttribPointer(
+             attrIndex, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void*>(offset));
+         attrIndex++;
+         localOffset += 3;
+         break;
 
-         case VertexComponent::VF_COLOR:
-            offset = localOffset * sizeof(GLfloat);
-            glVertexAttribPointer(
-                attrIndex, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offset));
-            glEnableVertexAttribArray(attrIndex);
-            attrIndex++;
-            localOffset += 4;
-            break;
+      case VertexComponent::VF_COLOR:
+         offset = localOffset * sizeof(GLfloat);
+         glVertexAttribPointer(
+            attrIndex, 4, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<void *>(offset));
+         glEnableVertexAttribArray(attrIndex);
+         attrIndex++;
+         localOffset += 4;
+         break;
 
          case VertexComponent::VF_TEX_COORD:
             offset = localOffset * sizeof(GLfloat);
