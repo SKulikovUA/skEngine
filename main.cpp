@@ -107,7 +107,7 @@ int main()
 
    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
    GLFWwindow *window = glfwCreateWindow(1280, 720, "SK Engine", nullptr, nullptr);
@@ -125,6 +125,8 @@ int main()
       glfwTerminate();
       return EXIT_FAILURE;
    }
+
+   std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
    std::unique_ptr<IShaderProgram> shaderProgram = std::make_unique<GLSLProgram>();
    if (shaderProgram != nullptr)

@@ -4,8 +4,8 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include "../interface/IModel.hpp"
-#include <assimp/scene.h>
 #include <GL/glew.h>
+#include <assimp/scene.h>
 
 class VertexAttributeFormat : public IVertexComponents
 {

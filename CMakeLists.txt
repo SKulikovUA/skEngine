@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_PROJECT_VERSION)
+#include(FindPkgConfig)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE "Debug")
@@ -8,7 +9,12 @@ set(CMAKE_BUILD_TYPE "Debug")
 project(skEngine)
 
 if(NOT MSVC)
-    find_package(ASSIMP REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(ASSIMP REQUIRED assimp)
+    message(INFO ${ASSIMP_ROOT_DIR})
+    message(INFO ${ASSIMP_INCLUDE_DIRS})
+    message(INFO ${ASSIMP_LIBRARY_DIRS})
+    message(INFO ${ASSIMP_LIBRARY})
     set(OpenGL_GL_PREFERENCE GLVND)
 else(NOT MSVC)
 	find_library(ASSIMP_LIBRARIES NAMES assimp-vc141-mt PATHS ${CMAKE_SOURCE_DIR}/externals/assimp/lib/)
@@ -47,7 +53,9 @@ set(DEF_INCLUDE_DIRECTORIES ${PROJECT_SOURCE_DIR}/externals/glfw/include/
 							${PROJECT_SOURCE_DIR}/externals/stb/
 						)
 if(NOT MSVC)
-	include_directories( ${DEF_INCLUDE_DIRECTORIES} )
+	include_directories(${DEF_INCLUDE_DIRECTORIES})
+        include_directories(${ASSIMP_INCLUDE_DIRS})
+
 else(NOT MSVC)
 	include_directories(
 						${DEF_INCLUDE_DIRECTORIES}
@@ -56,7 +64,7 @@ else(NOT MSVC)
 endif(NOT MSVC)
 
 add_executable(${PROJECT_NAME} "main.cpp")
-target_link_libraries(${PROJECT_NAME} src ${ASSIMP_LIBRARIES} glfw libglew_static)
+target_link_libraries(${PROJECT_NAME} src -L${ASSIMP_LIBRARY_DIRS} -lassimp glfw libglew_static)
 if(MSVC)
     target_link_libraries(${PROJECT_NAME} opengl32)
 endif(MSVC)

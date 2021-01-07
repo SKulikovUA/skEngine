@@ -1,4 +1,4 @@
-#version 450 core
+#version 410 core
 
 uniform mat4 projection;
 uniform mat4 view;

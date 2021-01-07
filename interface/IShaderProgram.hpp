@@ -1,7 +1,11 @@
 #pragma once
 
 #include <string>
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
 #include <glm/glm.hpp>
 
 class IShaderProgram
